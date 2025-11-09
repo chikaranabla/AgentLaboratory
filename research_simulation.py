@@ -29,12 +29,23 @@ class ResearchSimulation:
         """
         self.config = config
         
-        # Initialize GitHub manager
-        self.github = GitHubManager(
-            access_token=config['github_token'],
+        # Initialize GitHub managers for each scientist
+        # Scientist A's GitHub manager (for repository management and A's PRs)
+        self.github_a = GitHubManager(
+            access_token=config['github_token_a'],
             repo_owner=config['github_owner'],
             repo_name=config['repo_name']
         )
+        
+        # Scientist B's GitHub manager (for B's PRs and reviews)
+        self.github_b = GitHubManager(
+            access_token=config['github_token_b'],
+            repo_owner=config['github_owner'],
+            repo_name=config['repo_name']
+        )
+        
+        # For backward compatibility, use github_a as default
+        self.github = self.github_a
         
         # Initialize logger
         self.logger = SimulationLogger(
@@ -233,12 +244,15 @@ class ResearchSimulation:
         scientist_id = scientist.scientist_id
         branch_name = f"{scientist_id.lower()}-{stage_name}-{int(time.time())}"
         
+        # Select appropriate GitHub manager for this scientist
+        github_manager = self.github_a if scientist_id == "A" else self.github_b
+        
         # Create branch
-        self.github.create_branch(branch_name, "main")
+        github_manager.create_branch(branch_name, "main")
         self.logger.log_github_operation("create_branch", {"branch": branch_name})
         
         # Commit file
-        self.github.commit_file(
+        github_manager.commit_file(
             file_path=file_path,
             content=output,
             commit_message=f"[Scientist {scientist_id}] {stage_name}",
@@ -251,7 +265,7 @@ class ResearchSimulation:
         )
         
         # Create PR
-        pr = self.github.create_pull_request(
+        pr = github_manager.create_pull_request(
             title=f"[Scientist {scientist_id}] {stage_name}",
             body=f"Scientist {scientist_id}'s work on {stage_name}\n\n{output[:500]}...",
             head_branch=branch_name,
@@ -284,19 +298,22 @@ class ResearchSimulation:
         
         print(f"\nScientist {reviewer_id} reviewing PR #{pr_number}...")
         
-        # Get PR content
+        # Select appropriate GitHub manager for reviewer
+        reviewer_github = self.github_a if reviewer_id == "A" else self.github_b
+        
+        # Get PR content (can use any github manager for reading)
         pr_content = self.github.get_pr_content(pr_number)
         
         # Get review decision
         review_type, comment, reasoning = reviewer.review_pr(pr_content, pr_author_id)
         
-        # Post review to GitHub
+        # Post review to GitHub using reviewer's account
         if review_type == "APPROVE":
-            self.github.approve_pr(pr_number, comment)
+            reviewer_github.approve_pr(pr_number, comment)
         elif review_type == "REQUEST_CHANGES":
-            self.github.reject_pr(pr_number, comment)
+            reviewer_github.reject_pr(pr_number, comment)
         else:
-            self.github.add_pr_comment(pr_number, comment)
+            reviewer_github.add_pr_comment(pr_number, comment)
         
         self.logger.log_pr_review(
             reviewer_id, pr_number, pr_author_id,

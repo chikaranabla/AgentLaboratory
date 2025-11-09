@@ -329,7 +329,6 @@ class GitHubManager:
     def approve_pr(self, pr_number: int, comment: str = "LGTM! Approving this PR.") -> Dict:
         """
         Approve a pull request.
-        NOTE: Using COMMENT instead of APPROVE to support single-user simulation.
         
         Args:
             pr_number: Pull request number
@@ -338,15 +337,11 @@ class GitHubManager:
         Returns:
             Review information dictionary
         """
-        # Use COMMENT instead of APPROVE for single-user GitHub accounts
-        # Prepend approval indicator to comment
-        approval_comment = f"✅ **APPROVED**\n\n{comment}"
-        return self.create_review(pr_number, approval_comment, "COMMENT")
+        return self.create_review(pr_number, comment, "APPROVE")
     
     def reject_pr(self, pr_number: int, comment: str) -> Dict:
         """
         Reject/request changes on a pull request.
-        NOTE: Using COMMENT instead of REQUEST_CHANGES to support single-user simulation.
         
         Args:
             pr_number: Pull request number
@@ -355,10 +350,7 @@ class GitHubManager:
         Returns:
             Review information dictionary
         """
-        # Use COMMENT instead of REQUEST_CHANGES for single-user GitHub accounts
-        # Prepend rejection indicator to comment
-        rejection_comment = f"❌ **CHANGES REQUESTED**\n\n{comment}"
-        return self.create_review(pr_number, rejection_comment, "COMMENT")
+        return self.create_review(pr_number, comment, "REQUEST_CHANGES")
     
     def add_pr_comment(self, pr_number: int, comment: str) -> Dict:
         """

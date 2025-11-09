@@ -127,9 +127,15 @@ Example usage:
     
     # API Keys
     parser.add_argument(
-        '--github-token',
+        '--github-token-a',
         type=str,
-        help='GitHub Personal Access Token (overrides .env)'
+        help='GitHub Personal Access Token for Scientist A (overrides .env)'
+    )
+    
+    parser.add_argument(
+        '--github-token-b',
+        type=str,
+        help='GitHub Personal Access Token for Scientist B (overrides .env)'
     )
     
     parser.add_argument(
@@ -212,14 +218,16 @@ def main():
     
     # Get environment variables
     env_config = {
-        'github_token': os.getenv('GITHUB_TOKEN'),
+        'github_token_a': os.getenv('GITHUB_TOKEN_A'),
+        'github_token_b': os.getenv('GITHUB_TOKEN_B'),
         'gemini_api_key': os.getenv('GEMINI_API_KEY'),
         'github_owner': os.getenv('GITHUB_OWNER')
     }
     
     # Get command-line arguments
     args_config = {
-        'github_token': args.github_token,
+        'github_token_a': getattr(args, 'github_token_a', None),
+        'github_token_b': getattr(args, 'github_token_b', None),
         'gemini_api_key': args.gemini_api_key,
         'research_topic': args.research_topic,
         'max_steps': args.max_steps,
@@ -234,9 +242,14 @@ def main():
     config = merge_configs(yaml_config, env_config, args_config)
     
     # Validate required parameters
-    if not config.get('github_token'):
-        print("\n❌ ERROR: GitHub token not provided!")
-        print("Please set GITHUB_TOKEN in .env file or use --github-token argument")
+    if not config.get('github_token_a'):
+        print("\n❌ ERROR: GitHub token A (Scientist A) not provided!")
+        print("Please set GITHUB_TOKEN_A in .env file or use --github-token-a argument")
+        sys.exit(1)
+    
+    if not config.get('github_token_b'):
+        print("\n❌ ERROR: GitHub token B (Scientist B) not provided!")
+        print("Please set GITHUB_TOKEN_B in .env file or use --github-token-b argument")
         sys.exit(1)
     
     if not config.get('gemini_api_key'):

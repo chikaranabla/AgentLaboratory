@@ -1,15 +1,23 @@
 # AI Scientists Simulation Environment Variables
 # Copy this content to a file named .env and fill in your actual API keys
 
-# GitHub Personal Access Token
-# Generate one at: https://github.com/settings/tokens
+# GitHub Personal Access Tokens (2 accounts required)
+# Generate tokens at: https://github.com/settings/tokens
 # Required scopes: repo (full control of private repositories)
-GITHUB_TOKEN=your_github_token_here
+
+# Scientist A's GitHub Account Token
+# Example: chikaranabla
+GITHUB_TOKEN_A=your_github_token_a_here
+
+# Scientist B's GitHub Account Token
+# Example: chikaraoe-en (machine account for simulation)
+GITHUB_TOKEN_B=your_github_token_b_here
+
+# Repository Owner (Scientist A's GitHub username)
+# This is where the research repository will be created
+GITHUB_OWNER=your-github-username
 
 # Google Gemini API Key
 # Get one at: https://makersuite.google.com/app/apikey
 GEMINI_API_KEY=your_gemini_api_key_here
-
-# Your GitHub username (for repository creation)
-GITHUB_OWNER=your-github-username
 

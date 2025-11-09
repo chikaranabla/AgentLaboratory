@@ -1,179 +1,305 @@
-# Agent Laboratory: Using LLM Agents as Research Assistants
-
-
-<p align="center">
-  <img src="media/AgentLabLogo.png" alt="Demonstration of the flow of AgentClinic" style="width: 99%;">
-</p>
+# AI Scientists Simulation
 
 <p align="center">
-    【English | <a href="readme/README-chinese.md">中文</a> | <a href="readme/README-japanese.md">日本語</a> | <a href="readme/README-korean.md">한국어</a> | <a href="readme/README-filipino.md">Filipino</a> | <a href="readme/README-french.md">Français</a> | <a href="readme/README-slovak.md">Slovenčina</a> | <a href="readme/README-portugese.md">Português</a> | <a href="readme/README-spanish.md">Español</a> | <a href="readme/README-turkish.md">Türkçe</a> | <a href="readme/README-hindi.md">हिंदी</a> | <a href="readme/README-bengali.md">বাংলা</a> | <a href="readme/README-vietnamese.md">Tiếng Việt</a> | <a href="readme/README-russian.md">Русский</a> | <a href="readme/README-arabic.md">العربية</a> | <a href="readme/README-farsi.md">فارسی</a> | <a href="readme/README-italian.md">Italiano</a>】
+  <strong>2つのAI scientistsがGitHub PR/reviewプロセスを通じて共同研究を行うシミュレーションシステム</strong>
 </p>
 
-<p align="center">
-    【📝 <a href="https://arxiv.org/pdf/2501.04227">Paper</a> | 🌐 <a href="https://agentlaboratory.github.io/">Website</a> | 💻 <a href="https://github.com/SamuelSchmidgall/AgentLaboratory">Software</a> | 📰 <a href="https://agentlaboratory.github.io/#citation-ref">Citation</a>】
-</p>
+## 📖 概要
 
-## 📖 Overview
+**AI Scientists Simulation**は、2つの独立したAI scientistsが実際のGitHubリポジトリ上でプルリクエストとコードレビューを通じて協力しながら研究を進めるシミュレーションシステムです。
 
-- **Agent Laboratory** is an end-to-end autonomous research workflow meant to assist **you** as the human researcher toward **implementing your research ideas**. Agent Laboratory consists of specialized agents driven by large language models to support you through the entire research workflow—from conducting literature reviews and formulating plans to executing experiments and writing comprehensive reports. 
-- This system is not designed to replace your creativity but to complement it, enabling you to focus on ideation and critical thinking while automating repetitive and time-intensive tasks like coding and documentation. By accommodating varying levels of computational resources and human involvement, Agent Laboratory aims to accelerate scientific discovery and optimize your research productivity.
+### 主な特徴
 
-<p align="center">
-  <img src="media/AgentLab.png" alt="Demonstration of the flow of AgentClinic" style="width: 99%;">
-</p>
+- **2つの独立したAI scientist**: それぞれ異なるGitHubアカウントで動作し、本物の研究者のように振る舞います
+- **6段階の研究プロセス**: テーマ決定 → 仮説 → 実験計画 → 実装 → 結果解釈 → 論文執筆
+- **GitHub統合**: 実際のPR作成、コードレビュー、承認/却下、マージを実行
+- **市民エージェント評価**: 5人の多様なペルソナを持つ市民エージェントが研究テーマを評価し、報酬を配分
+- **詳細なログ記録**: すべての意思決定、PR、レビュー、エラーを記録
+- **Google Gemini API**: 最新のLLMを活用した高度な推論能力
 
-### 🔬 How does Agent Laboratory work?
+## 🎯 システムの仕組み
 
-- Agent Laboratory consists of three primary phases that systematically guide the research process: (1) Literature Review, (2) Experimentation, and (3) Report Writing. During each phase, specialized agents driven by LLMs collaborate to accomplish distinct objectives, integrating external tools like arXiv, Hugging Face, Python, and LaTeX to optimize outcomes. This structured workflow begins with the independent collection and analysis of relevant research papers, progresses through collaborative planning and data preparation, and results in automated experimentation and comprehensive report generation. Details on specific agent roles and their contributions across these phases are discussed in the paper.
-
-<p align="center">
-  <img src="media/AgentLabWF.png" alt="Demonstration of the flow of AgentClinic" style="width: 99%;">
-</p>
-
-
-### 👾 Currently supported models
-
-* **OpenAI**: o1, o1-preview, o1-mini, gpt-4o
-* **DeepSeek**: deepseek-chat (deepseek-v3)
-
-To select a specific llm set the flag `--llm-backend="llm_model"` for example `--llm-backend="gpt-4o"` or `--llm-backend="deepseek-chat"`. Please feel free to add a PR supporting new models according to your need!
-
-## 🖥️ Installation
-
-### Python venv option
-
-* We recommend using python 3.12
-
-1. **Clone the GitHub Repository**: Begin by cloning the repository using the command:
-```bash
-git clone git@github.com:SamuelSchmidgall/AgentLaboratory.git
+```
+初期化
+  ↓
+テーマ決定フェーズ
+  ├─ Scientist A: テーマ提案 → PR作成
+  ├─ Scientist B: テーマ提案 → PR作成
+  └─ 市民エージェント: 各テーマを評価・報酬配分
+  ↓
+メイン研究ループ (各ステージで繰り返し)
+  ├─ Scientist A: ステージ完了 → PR作成
+  ├─ Scientist B: レビュー → 承認/却下
+  ├─ (承認の場合) マージ
+  ├─ Scientist B: ステージ完了 → PR作成
+  ├─ Scientist A: レビュー → 承認/却下
+  └─ (承認の場合) マージ
+  ↓
+完了 (すべてのステージが完了)
 ```
 
-2. **Set up and Activate Python Environment**
+## 🚀 クイックスタート
+
+### 前提条件
+
+- **Python 3.10以上**
+- **Git**
+- **2つのGitHubアカウント**
+  - 個人アカウント (Scientist A用)
+  - 機械アカウント (Scientist B用) - [GitHubの規約](https://docs.github.com/ja/github/site-policy/github-terms-of-service)で許可されています
+- **Google Gemini API key** - [こちらから取得](https://makersuite.google.com/app/apikey)
+
+### インストール
+
+1. **リポジトリのクローン**
+
 ```bash
-python -m venv venv_agent_lab
-```
-- Now activate this environment:
-```bash
-source venv_agent_lab/bin/activate
+git clone https://github.com/your-username/AI-scientists-simulation.git
+cd AI-scientists-simulation/AgentLaboratory
 ```
 
-3. **Install required libraries**
+2. **Python仮想環境の作成と有効化**
+
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+3. **依存パッケージのインストール**
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Install pdflatex [OPTIONAL]**
+### GitHubセットアップ
+
+#### 1. 2つのGitHubアカウントの準備
+
+- **Scientist A**: 既存の個人アカウント（例: `chikaranabla`）
+- **Scientist B**: 新規作成した機械アカウント（例: `chikaraoe-en`）
+
+#### 2. Personal Access Token (PAT) の作成
+
+両方のアカウントで以下の手順を実行：
+
+1. GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. "Generate new token (classic)" をクリック
+3. Note: `AI Scientists Simulation` など
+4. Expiration: 適切な期限を設定
+5. **Scopes**: `repo` (フルコントロール) にチェック
+6. "Generate token" をクリック
+7. **トークンをコピーして保存**（再表示できません）
+
+#### 3. コラボレーターの追加
+
+Scientist A (リポジトリオーナー) のアカウントで：
+
+1. 後で作成されるリポジトリ（例: `ai-scientists-research`）の Settings → Collaborators
+2. "Add people" をクリック
+3. Scientist B のユーザー名を入力して招待
+4. Scientist B のアカウントで招待を承諾
+
+**注意**: リポジトリは初回実行時に自動作成されます。作成後にコラボレーターを追加してください。
+
+### 環境変数の設定
+
+1. **`.env` ファイルの作成**
+
 ```bash
-sudo apt install pdflatex
-```
-- This enables latex source to be compiled by the agents.
-- **[IMPORTANT]** If this step cannot be run due to not having sudo access, pdf compiling can be turned off via running Agent Laboratory via setting the `--compile-latex` flag to false: `--compile-latex "false"`
-
-
-
-5. **Now run Agent Laboratory!**
-
-`python ai_lab_repo.py --api-key "API_KEY_HERE" --llm-backend "o1-mini" --research-topic "YOUR RESEARCH IDEA"`
-
-or, if you don't have pdflatex installed
-
-`python ai_lab_repo.py --api-key "API_KEY_HERE" --llm-backend "o1-mini" --research-topic "YOUR RESEARCH IDEA" --compile-latex "false"`
-
-### Co-Pilot mode
-
-To run Agent Laboratory in copilot mode, simply set the copilot-mode flag to `"true"`
-
-`python ai_lab_repo.py --api-key "API_KEY_HERE" --llm-backend "o1-mini" --research-topic "YOUR RESEARCH IDEA" --copilot-mode "true"`
-
------
-## Tips for better research outcomes
-
-
-#### [Tip #1] 📝 Make sure to write extensive notes! 📝
-
-**Writing extensive notes is important** for helping your agent understand what you're looking to accomplish in your project, as well as any style preferences. Notes can include any experiments you want the agents to perform, providing API keys, certain plots or figures you want included, or anything you want the agent to know when performing research.
-
-This is also your opportunity to let the agent know **what compute resources it has access to**, e.g. GPUs (how many, what type of GPU, how many GBs), CPUs (how many cores, what type of CPUs), storage limitations, and hardware specs.
-
-In order to add notes, you must modify the task_notes_LLM structure inside of `ai_lab_repo.py`. Provided below is an example set of notes used for some of our experiments. 
-
-
-```
-task_notes_LLM = [
-    {"phases": ["plan formulation"],
-     "note": f"You should come up with a plan for TWO experiments."},
-
-    {"phases": ["plan formulation", "data preparation",  "running experiments"],
-     "note": "Please use gpt-4o-mini for your experiments."},
-
-    {"phases": ["running experiments"],
-     "note": f'Use the following code to inference gpt-4o-mini: \nfrom openai import OpenAI\nos.environ["OPENAI_API_KEY"] = "{api_key}"\nclient = OpenAI()\ncompletion = client.chat.completions.create(\nmodel="gpt-4o-mini-2024-07-18", messages=messages)\nanswer = completion.choices[0].message.content\n'},
-
-    {"phases": ["running experiments"],
-     "note": f"You have access to only gpt-4o-mini using the OpenAI API, please use the following key {api_key} but do not use too many inferences. Do not use openai.ChatCompletion.create or any openai==0.28 commands. Instead use the provided inference code."},
-
-    {"phases": ["running experiments"],
-     "note": "I would recommend using a small dataset (approximately only 100 data points) to run experiments in order to save time. Do not use much more than this unless you have to or are running the final tests."},
-
-    {"phases": ["data preparation", "running experiments"],
-     "note": "You are running on a MacBook laptop. You can use 'mps' with PyTorch"},
-
-    {"phases": ["data preparation", "running experiments"],
-     "note": "Generate figures with very colorful and artistic design."},
-    ]
+cp env_example.txt .env
 ```
 
---------
+2. **`.env` ファイルの編集**
 
-#### [Tip #2] 🚀 Using more powerful models generally leads to better research 🚀
+```env
+# Scientist A's GitHub Account Token
+GITHUB_TOKEN_A=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-When conducting research, **the choice of model can significantly impact the quality of results**. More powerful models tend to have higher accuracy, better reasoning capabilities, and better report generation. If computational resources allow, prioritize the use of advanced models such as o1-(mini/preview) or similar state-of-the-art large language models.
+# Scientist B's GitHub Account Token
+GITHUB_TOKEN_B=ghp_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
-However, **it’s important to balance performance and cost-effectiveness**. While powerful models may yield better results, they are often more expensive and time-consuming to run. Consider using them selectively—for instance, for key experiments or final analyses—while relying on smaller, more efficient models for iterative tasks or initial prototyping.
+# Repository Owner (Scientist A's username)
+GITHUB_OWNER=chikaranabla
 
-When resources are limited, **optimize by fine-tuning smaller models** on your specific dataset or combining pre-trained models with task-specific prompts to achieve the desired balance between performance and computational efficiency.
+# Google Gemini API Key
+GEMINI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
 
------
+### config.yaml の設定
 
-#### [Tip #3] ✅ You can load previous saves from checkpoints ✅
+研究トピックやその他の設定を `config.yaml` で編集：
 
-**If you lose progress, internet connection, or if a subtask fails, you can always load from a previous state.** All of your progress is saved by default in the `state_saves` variable, which stores each individual checkpoint. Just pass the following arguments when running `ai_lab_repo.py`
+```yaml
+research:
+  topic: "自然言語処理における感情分析の改良"
+  max_steps: 100
 
-`python ai_lab_repo.py --api-key "API_KEY_HERE" --research-topic "YOUR RESEARCH IDEA" --llm-backend "o1-mini" --load-existing True --load-existing-path "state_saves/LOAD_PATH"`
+github:
+  repo_name: "ai-scientists-research"
+  owner: "chikaranabla"  # GITHUB_OWNERで上書き可能
 
------
+logging:
+  log_dir: "./logs"
+  console_output: true
 
+gemini:
+  model: "gemini-2.0-flash-lite"
+  temperature: 0.7
+  max_tokens: 2048
+```
 
+### 実行
 
-#### [Tip #4] 🈯 If you are running in a language other than English 🈲
+```bash
+python run_simulation.py
+```
 
-If you are running Agent Laboratory in a language other than English, no problem, just make sure to provide a language flag to the agents to perform research in your preferred language. Note that we have not extensively studied running Agent Laboratory in other languages, so be sure to report any problems you encounter.
+設定を確認してから `y` を入力してシミュレーションを開始します。
 
-For example, if you are running in Chinese:
+## 📁 ディレクトリ構造
 
-`python ai_lab_repo.py --api-key "API_KEY_HERE" --research-topic "YOUR RESEARCH IDEA (in your language)" --llm-backend "o1-mini" --language "中文"`
+```
+AgentLaboratory/
+├── run_simulation.py          # メイン実行スクリプト
+├── research_simulation.py     # シミュレーション管理
+├── github_manager.py          # GitHub API統合
+├── ai_scientist_agents.py     # AI scientistエージェント
+├── citizen_agents.py          # 市民エージェント
+├── simulation_logger.py       # ログ記録
+├── inference.py               # LLM推論
+├── config.yaml                # 設定ファイル
+├── .env                       # 環境変数（要作成）
+├── env_example.txt            # 環境変数テンプレート
+├── requirements.txt           # 依存パッケージ
+├── QUICK_START.md            # 詳細なクイックスタートガイド
+├── README.md                 # このファイル
+└── logs/                     # シミュレーションログ（自動生成）
+    ├── simulation_log.json
+    └── simulation_log.txt
+```
 
-----
+## 🔬 研究ステージ
 
+シミュレーションは以下の6つのステージで構成されます：
 
-#### [Tip #5] 🌟 There is a lot of room for improvement 🌟
+1. **theme_decision**: 研究テーマの決定と具体化
+2. **hypothesis**: 具体的な仮説の立案
+3. **experiment_plan**: 実験計画の策定
+4. **experiment_implementation**: 実験コードの実装
+5. **results_interpretation**: 結果の解釈と分析
+6. **paper_writing**: 論文の執筆
 
-There is a lot of room to improve this codebase, so if you end up making changes and want to help the community, please feel free to share the changes you've made! We hope this tool helps you!
+各ステージで：
+- Scientistが成果物を作成してPRを提出
+- もう一方のScientistがレビュー
+- 承認されればマージ、却下されれば修正して再提出
 
+## 👥 市民エージェント
 
-## 📜 License
+5人の多様なペルソナを持つ市民エージェントが研究テーマを評価：
 
-Source Code Licensing: Our project's source code is licensed under the MIT License. This license permits the use, modification, and distribution of the code, subject to certain conditions outlined in the MIT License.
+1. **佐藤美咲**: 30代の会社員、実用性重視
+2. **田中健太**: 20代の大学生、技術的興味
+3. **鈴木花子**: 60代の主婦、社会への影響
+4. **山田太郎**: 田舎の農家、分かりやすさ
+5. **高橋ヒロシ**: 工場作業員、新技術への期待と不安
 
-## 📬 Contact
+各市民は研究テーマに対して：
+- コメントを投稿
+- 報酬額を決定（100円〜10,000円）
+- 推論プロセスを説明
 
-If you would like to get in touch, feel free to reach out to [sschmi46@jhu.edu](mailto:sschmi46@jhu.edu)
+## 📊 ログとモニタリング
 
-## Reference / Bibtex
+シミュレーション実行後、`logs/` ディレクトリに以下が保存されます：
 
+- **simulation_log.json**: 構造化されたログデータ
+- **simulation_log.txt**: 人間が読みやすい形式のログ
 
+ログには以下の情報が含まれます：
+- すべてのPR作成とレビュー
+- 市民エージェントの評価
+- LLMの推論プロセス
+- エラーと警告
+- タイムスタンプ付きイベント
 
+## 🛠️ トラブルシューティング
+
+### GitHub API 422エラー: "Can not request changes on your own pull request"
+
+**原因**: 両方のScientistが同じGitHubアカウントを使用している
+
+**解決策**: 2つの異なるGitHubアカウントを使用し、`.env` に両方のトークンを設定
+
+### GitHub API Rate Limit
+
+**症状**: "API rate limit exceeded" エラー
+
+**解決策**:
+- 認証済みリクエストは1時間に5,000回まで
+- 待つか、別のアカウントを使用
+- [レート制限の確認](https://api.github.com/rate_limit)
+
+### Gemini API エラー
+
+**症状**: "Invalid API key" や認証エラー
+
+**解決策**:
+- API keyが正しく設定されているか確認
+- [Gemini API Console](https://makersuite.google.com/app/apikey)で確認
+- APIが有効化されているか確認
+
+### コラボレーターの権限エラー
+
+**症状**: Scientist BがPRを作成できない
+
+**解決策**:
+1. Scientist Bがリポジトリのコラボレーターとして追加されているか確認
+2. Scientist Bが招待を承諾したか確認
+3. GITHUB_TOKEN_Bに `repo` スコープがあるか確認
+
+## ⚙️ 高度な設定
+
+### コマンドライン引数
+
+```bash
+# カスタム設定ファイルを使用
+python run_simulation.py --config custom_config.yaml
+
+# 研究トピックを上書き
+python run_simulation.py --research-topic "機械学習の解釈可能性"
+
+# 最大ステップ数を変更
+python run_simulation.py --max-steps 50
+
+# 異なるGeminiモデルを使用
+python run_simulation.py --model "gemini-1.5-pro"
+
+# すべてのオプションを表示
+python run_simulation.py --help
+```
+
+### サポートされているGeminiモデル
+
+- `gemini-2.0-flash-lite` (デフォルト、高速)
+- `gemini-2.0-flash-exp` (実験的)
+- `gemini-1.5-pro` (高精度)
+- `gemini-1.5-flash` (バランス型)
+
+## 📜 ライセンス
+
+このプロジェクトはMITライセンスの下でライセンスされています。
+
+## 🙏 謝辞
+
+このプロジェクトは[Agent Laboratory](https://github.com/SamuelSchmidgall/AgentLaboratory)プロジェクトのコードベースを基に開発されました。元のプロジェクトの作成者とコントリビューターに感謝します。
+
+元のAgent Laboratory論文:
 ```bibtex
 @misc{schmidgall2025agentlaboratoryusingllm,
       title={Agent Laboratory: Using LLM Agents as Research Assistants}, 
@@ -185,3 +311,32 @@ If you would like to get in touch, feel free to reach out to [sschmi46@jhu.edu](
       url={https://arxiv.org/abs/2501.04227}, 
 }
 ```
+
+## 📬 連絡先
+
+質問やフィードバックがある場合は、Issueを作成してください。
+
+## 🌟 コントリビューション
+
+プルリクエストを歓迎します！改善のアイデアがある場合は：
+
+1. このリポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを開く
+
+## 📝 更新履歴
+
+### Version 1.0.0
+- 初回リリース
+- 2つのGitHubアカウントによるマルチエージェントシミュレーション
+- 市民エージェント評価システム
+- 6段階の研究プロセス
+- 完全なGitHub統合
+- Google Gemini API統合
+- 詳細なログ記録
+
+---
+
+**Happy Researching! 🔬🤖**
