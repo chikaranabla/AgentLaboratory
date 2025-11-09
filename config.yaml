@@ -1,0 +1,23 @@
+# AI Scientists Simulation Configuration File
+
+research:
+  topic: "自然言語処理における感情分析の改良"
+  max_steps: 100
+
+github:
+  repo_name: "ai-scientists-research"
+  owner: "your-github-username"  # Change this to your GitHub username
+
+logging:
+  log_dir: "./logs"
+  console_output: true
+
+agents:
+  review_strictness: "medium"  # low, medium, high
+  stage_timeout: 300  # seconds
+
+gemini:
+  model: "gemini-2.0-flash-lite"  # gemini-2.0-flash-lite, gemini-1.5-pro, gemini-1.5-flash
+  temperature: 0.7
+  max_tokens: 2048
+

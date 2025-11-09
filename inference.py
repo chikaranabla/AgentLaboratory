@@ -1,12 +1,30 @@
-import time, tiktoken
-from openai import OpenAI
-import openai
-import os, anthropic, json
+import time
+import os, json
+
+# Optional imports for OpenAI and Anthropic (not required for Gemini-based simulations)
+try:
+    import tiktoken
+    from openai import OpenAI
+    import openai
+    import anthropic
+    OPENAI_AVAILABLE = True
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    ANTHROPIC_AVAILABLE = False
+    tiktoken = None
+    OpenAI = None
+    openai = None
+    anthropic = None
 
 TOKENS_IN = dict()
 TOKENS_OUT = dict()
 
-encoding = tiktoken.get_encoding("cl100k_base")
+# Initialize encoding only if tiktoken is available
+if tiktoken is not None:
+    encoding = tiktoken.get_encoding("cl100k_base")
+else:
+    encoding = None
 
 def curr_cost_est():
     costmap_in = {

@@ -1,0 +1,19 @@
+# AI Scientists Simulation - Required Packages Only
+# Minimal requirements without TensorFlow and heavy ML libraries
+
+# Core dependencies
+PyGithub>=2.1.1
+google-generativeai>=0.3.0
+python-dotenv>=1.0.0
+PyYAML>=6.0
+
+# AgentLaboratory minimal dependencies
+pypdf>=5.1.0
+arxiv>=2.1.3
+anthropic>=0.39.0
+openai>=1.55.1
+datasets>=3.1.0
+
+# Basic utilities
+requests>=2.32.3
+
